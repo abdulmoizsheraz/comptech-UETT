@@ -1,0 +1,15 @@
+.events:hover .arrowhead {
+    display: block !important;
+    transform: translateX(0) !important;
+    animation: 1s arrow linear;
+}
+
+@keyframes arrow {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}

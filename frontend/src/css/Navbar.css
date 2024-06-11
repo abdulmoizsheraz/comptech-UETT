@@ -1,0 +1,6 @@
+.blurredview {
+    box-shadow: 0 4px 30px #11134699;
+    backdrop-filter: blur(7.8px);
+    -webkit-backdrop-filter: blur(7.8px);
+    border: 1px solid rgba(17, 19, 70, 0.11);
+}
