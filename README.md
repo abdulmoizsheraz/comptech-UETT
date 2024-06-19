@@ -2,6 +2,50 @@
 
 Welcome to the comptech project! This README will guide you through the steps to clone the repository and set up the Vite application for  frontend .
 
+
+#End Points of a Server
+
+##Event Endpoints
+Create Event
+
+POST /api/events
+Create a new event.
+Get All Events
+
+GET /api/events
+Retrieve all events.
+Get Event by ID
+
+GET /api/events/:id
+Retrieve a specific event by ID.
+Update Event by ID
+
+PUT /api/events/:id
+Update a specific event by ID.
+Delete Event by ID
+
+DELETE /api/events/:id
+Delete a specific event by ID.
+##User Endpoints
+Create User
+
+POST /api/users
+Create a new user.
+Get All Users
+
+GET /api/users/:id
+Retrieve a specific user by ID.
+Update User by ID
+
+PUT /api/users/:id
+Update a specific user by ID.
+Delete User by ID
+
+DELETE /api/users/:id
+Delete a specific user by ID.
+
+
+
 ## Cloning the Repository
 To clone the repository, follow these steps:
 1. Open your terminal.
