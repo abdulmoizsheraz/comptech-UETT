@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 const generateTokenFromid = (user_id) => {
     return jwt.sign({ id: user_id }, process.env.JWT_SECRET, {
@@ -6,5 +6,4 @@ const generateTokenFromid = (user_id) => {
     })
 }
 
-
-module.exports = { generateTokenFromid };
+export { generateTokenFromid };

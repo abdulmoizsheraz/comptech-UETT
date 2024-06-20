@@ -1,10 +1,10 @@
-const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("./asyncErrors");
-const jwt = require('jsonwebtoken');
-const User = require('../Models/userModel');     // schema pehla bnana iss ka 
+import ErrorHandler from "../utils/ErrorHandler.js";
+import { TryCatch } from "../middleware/asyncErrors.js";
+import jwt from 'jsonwebtoken';
+import { User } from '../models/user.model.js';
 
 
-const AuthenticateUser = catchAsyncErrors(async (req, res, next) => {
+const AuthenticateUser = TryCatch(async (req, res, next) => {
     const token = await req.cookies.token;
     if (!token) {
         return next(new ErrorHandler("Please login to access this resource", 401));

@@ -5,10 +5,16 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    img: {
-        type: String,
-        required: true
-    },
+    img: [
+        {
+            public_id: {
+                type: String,
+            },
+            url: {
+                type: String,
+            }
+        }
+    ],
     date: {
         type: Date,
         required: true

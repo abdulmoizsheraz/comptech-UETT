@@ -1,3 +1,9 @@
-module.exports = (func) => (req, res, next) => {
-    Promise.resolve(func(req, res, next)).catch(next);
-}
+const TryCatch = (controller) => async (req, res, next) => {
+    try {
+        await controller(req, res, next);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export { TryCatch };
