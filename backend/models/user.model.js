@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -8,16 +9,15 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
     },
-    img: [
-        {
-            public_id: {
-                type: String,
-            },
-            url: {
-                type: String,
-            }
+    img:
+    {
+        public_id: {
+            type: String,
+        },
+        url: {
+            type: String,
         }
-    ],
+    },
     about: {
         type: String,
         required: true
@@ -26,20 +26,30 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    socialMedia: [
-        {
-            name: {
-                type: String,
-                required: true
-            },
-            link: {
-                type: String,
-                required: true
-            }
+    socialMedia:
+    {
+        name: {
+            type: String,
+        },
+        link: {
+            type: String,
         }
-    ]
+    }
+
 }, {
     timestamps: true
 });
+
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) {
+        next();
+    }
+    this.password = await bcrypt.hash(this.password, 12);
+    next();
+});
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+    return await bcrypt.compare(password, this.password);
+}
 
 export const User = mongoose.model('User', userSchema);
