@@ -5,8 +5,8 @@ import { User } from "../models/user.model.js";
 
 
 const registerUser = TryCatch(async (req, res, next) => {
-    const { name, password, about, currentPosition, socialMedia } = req.body;
-    let socialmedia = JSON.parse(socialMedia);
+    const { name, password, about, currentPosition, socialmedia } = req.body;
+    const socialMedia = JSON.parse(socialmedia);
     if (!password) {
         const file = req.file;
         const folder = "user";
@@ -48,10 +48,7 @@ const registerUser = TryCatch(async (req, res, next) => {
             },
             about,
             currentPosition,
-            socialMedia: {
-                name: socialmedia.name,
-                link: socialmedia.link
-            }
+            socialMedia
         });
         if (!user) return next(new ErrorHandler('User registration failed', 400));
 

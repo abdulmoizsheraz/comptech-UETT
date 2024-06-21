@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    socialMedia:
+    socialMedia:[
     {
         name: {
             type: String,
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
         link: {
             type: String,
         }
-    }
+    }]
 
 }, {
     timestamps: true
