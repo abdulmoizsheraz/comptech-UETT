@@ -4,6 +4,7 @@ import { connectDatabase } from './database/databaseConnection.js';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route.js';
 import {v2 as cloudinary} from 'cloudinary';
+import errorMiddleware from './middleware/error.js';
 
 dotenv.config({
     path: './config/config.env'
@@ -24,7 +25,7 @@ app.use(cookieParser());
 
 app.use('/api/user', userRouter);
 
-
+app.use(errorMiddleware);
 app.listen(process.env.PORT || 8000, () => {
     console.log(`Server is running on port ${process.env.PORT || 8000}`);
 });

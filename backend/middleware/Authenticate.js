@@ -5,7 +5,7 @@ import { User } from '../models/user.model.js';
 
 
 const AuthenticateUser = TryCatch(async (req, res, next) => {
-    const token = await req.cookies.token;
+    const token = await req.cookies['JWT-Token'];
     if (!token) {
         return next(new ErrorHandler("Please login to access this resource", 401));
     }
@@ -29,7 +29,7 @@ const isUserAdmin = (role) => {
     }
 }
 
-module.exports = {
+export {
     AuthenticateUser,
     isUserAdmin
 };
