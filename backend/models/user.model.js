@@ -27,23 +27,23 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    socialMedia:[
-    {
-        name: {
-            type: String,
-        },
-        link: {
-            type: String,
-        }
-    }]
+    socialMedia: [
+        {
+            name: {
+                type: String,
+            },
+            link: {
+                type: String,
+            }
+        }]
 
 }, {
     timestamps: true
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
-        next();
+        return next();
     }
     this.password = await bcrypt.hash(this.password, 12);
     next();

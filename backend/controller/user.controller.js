@@ -4,58 +4,48 @@ import ErrorHandler from "../utils/ErrorHandler.js";
 import { User } from "../models/user.model.js";
 import { generateTokenFromid } from "../utils/generateToken.js";
 
+async function createUser(data, next) {
+    try {
+        const user = await User.create(data);
+        if (!user) return next(new ErrorHandler('User registration failed', 400));
+        return user;
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 400));
+    }
+};
 
 const registerUser = TryCatch(async (req, res, next) => {
-    const { name, password, about, currentPosition, socialmedia } = req.body;
-    const socialMedia = JSON.parse(socialmedia);
-    if (!password) {
-        const file = req.file;
-        const folder = "user";
-        const result = await UploadFilesCloudinary(file, folder);
-        if (!result) return next(new ErrorHandler('Image upload failed', 400));
+    const { name, about, currentPosition } = req.body;
+    let userData = { name, about, currentPosition };
 
-        const user = await User.create({
-            name,
-            img: {
-                public_id: result.public_id,
-                url: result.secure_url
-            },
-            about,
-            currentPosition,
-            socialMedia
-        });
-        if (!user) return next(new ErrorHandler('User registration failed', 400));
-
-        return res.status(201).json({
-            success: true,
-            message: 'User registered successfully',
-            user
-        })
-    } else {
-        const file = req.file;
-        const folder = "user";
-        const result = await UploadFilesCloudinary(file, folder);
-        if (!result) return next(new ErrorHandler('Image upload failed', 400));
-
-        const user = await User.create({
-            name,
-            password,
-            img: {
-                public_id: result.public_id,
-                url: result.secure_url
-            },
-            about,
-            currentPosition,
-            socialMedia
-        });
-        if (!user) return next(new ErrorHandler('User registration failed', 400));
-
-        return res.status(201).json({
-            success: true,
-            message: 'User registered successfully',
-            user
-        })
+    if (req.body?.socialmedia) {
+        const socialMedia = JSON.parse(req.body.socialmedia);
+        userData.socialMedia = socialMedia;
     }
+
+    if (req.body?.password) {
+        userData.password = req.body.password;
+    }
+
+    if (req?.file) {
+        const folder = "user";
+        const result = await UploadFilesCloudinary(req.file, folder);
+        if (!result) return next(new ErrorHandler('Image upload failed', 400));
+
+        userData.img = {
+            public_id: result.public_id,
+            url: result.secure_url
+        };
+    }
+
+    const user = await createUser(userData, next);
+    if (!user) return next(new ErrorHandler('User registration failed', 400));
+
+    return res.status(201).json({
+        success: true,
+        message: 'User created successfully',
+        data: user
+    });
 });
 
 const loginUser = TryCatch(async (req, res, next) => {
