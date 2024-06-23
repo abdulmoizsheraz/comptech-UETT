@@ -134,10 +134,10 @@ const updateUser = TryCatch(async (req, res, next) => {
     }
 
     // Check if socialMedia is provided in the update
-    if (updateData?.socialMedia) {
+    if (updateData.socialMedia) {
         // Case 1: Update specific social media object
-        if (updateData.socialMedia.name && updateData.socialMedia.link) {
-            const index = user.socialMedia.findIndex(s => s.name === updateData.socialMedia.name);
+        if (updateData.socialMedia._id) {
+            const index = user.socialMedia.findIndex(s => s._id.toString() === updateData.socialMedia._id.toString());
             if (index !== -1) {
                 // Update existing social media object
                 user.socialMedia[index] = { ...user.socialMedia[index], ...updateData.socialMedia };
@@ -154,16 +154,16 @@ const updateUser = TryCatch(async (req, res, next) => {
     }
 
     // Check if career is provided in the update
-    if (updateData?.career) {
+    if (updateData.career) {
         // Case 1: Update specific career object by unique identifier (e.g., id)
         if (updateData.career._id) {
-            const index = user.career.findIndex(c => c.id === updateData.career._id);
+            const index = user.career.findIndex(c => c._id.toString() === updateData.career._id.toString());
             if (index !== -1) {
                 // Update existing career object by id
                 user.career[index] = { ...user.career[index], ...updateData.career };
             } else {
                 // Optionally handle the case where the id does not exist
-                console.log("Career object with provided id not found.");
+                user.career.push(updateData.career);
             }
         }
         // Case 2: Replace entire career array
