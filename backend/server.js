@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connectDatabase } from './database/databaseConnection.js';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route.js';
+import eventRouter from './routes/event.route.js';
 import {v2 as cloudinary} from 'cloudinary';
 import errorMiddleware from './middleware/error.js';
 
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/user', userRouter);
+app.use('/api/event', eventRouter);
 
 app.use(errorMiddleware);
 app.listen(process.env.PORT || 8000, () => {

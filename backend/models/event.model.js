@@ -41,17 +41,14 @@ const eventSchema = new mongoose.Schema({
     },
     collaboration: {
         type: String,
-        required: true
     },
     eventPoints: [
         {
             keyPoints: {
                 type: String,
-                required: true
             },
             explanation: {
                 type: String,
-                required: true
             }
         }
     ]

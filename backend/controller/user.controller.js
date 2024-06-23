@@ -23,6 +23,11 @@ const registerUser = TryCatch(async (req, res, next) => {
         userData.socialMedia = socialMedia;
     }
 
+    if (req.body?.career) {
+        const career = JSON.parse(req.body.career);
+        userData.career = career;
+    }
+
     if (req.body?.password) {
         userData.password = req.body.password;
     }
@@ -122,28 +127,64 @@ const getUser = TryCatch(async (req, res, next) => {
 });
 
 const updateUser = TryCatch(async (req, res, next) => {
-    // Assuming the user's ID is passed as a URL parameter
     const { id } = req.params;
-    const updates = req.body; // Contains the fields to update
-
-    // Find the user by ID
+    const updateData = req.body;
     const user = await User.findById(id);
+
     if (!user) {
-        return next(new ErrorHandler('User not found', 404));
+        return next(new ErrorHandler("User not found", 404));
     }
 
-    // Dynamically apply updates from the request body
-    Object.keys(updates).forEach((key) => {
-        user[key] = updates[key];
+    // Check if socialMedia is provided in the update
+    if (updateData?.socialMedia) {
+        // Case 1: Update specific social media object
+        if (updateData.socialMedia.name && updateData.socialMedia.link) {
+            const index = user.socialMedia.findIndex(s => s.name === updateData.socialMedia.name);
+            if (index !== -1) {
+                // Update existing social media object
+                user.socialMedia[index] = { ...user.socialMedia[index], ...updateData.socialMedia };
+            } else {
+                // Add new social media object if platform not found
+                user.socialMedia.push(updateData.socialMedia);
+            }
+        }
+        // Case 2: Replace entire socialMedia array
+        else if (Array.isArray(updateData.socialMedia)) {
+            user.socialMedia = updateData.socialMedia;
+        }
+        delete updateData.socialMedia; // Prevent re-updating
+    }
+
+    // Check if career is provided in the update
+    if (updateData?.career) {
+        // Case 1: Update specific career object by unique identifier (e.g., id)
+        if (updateData.career._id) {
+            const index = user.career.findIndex(c => c.id === updateData.career._id);
+            if (index !== -1) {
+                // Update existing career object by id
+                user.career[index] = { ...user.career[index], ...updateData.career };
+            } else {
+                // Optionally handle the case where the id does not exist
+                console.log("Career object with provided id not found.");
+            }
+        }
+        // Case 2: Replace entire career array
+        else if (Array.isArray(updateData.career)) {
+            user.career = updateData.career;
+        }
+        delete updateData.career; // Prevent re-updating
+    }
+
+    // Update other fields
+    Object.keys(updateData).forEach(key => {
+        user[key] = updateData[key];
     });
 
-    // Save the updated user
     await user.save();
-
     res.status(200).json({
         success: true,
-        message: 'User updated successfully',
-        data: user,
+        message: "User updated successfully",
+        user
     });
 });
 

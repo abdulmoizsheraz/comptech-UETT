@@ -35,8 +35,18 @@ const userSchema = new mongoose.Schema({
             link: {
                 type: String,
             }
-        }]
-
+        }
+    ],
+    career: [
+        {
+            team: {
+                type: String,
+            },
+            stage: {
+                type: String,
+            }
+        }
+    ]
 }, {
     timestamps: true
 });
