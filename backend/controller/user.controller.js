@@ -4,15 +4,6 @@ import ErrorHandler from "../utils/ErrorHandler.js";
 import { User } from "../models/user.model.js";
 import { generateTokenFromid } from "../utils/generateToken.js";
 
-async function createUser(data, next) {
-    try {
-        const user = await User.create(data);
-        if (!user) return next(new ErrorHandler('User registration failed', 400));
-        return user;
-    } catch (error) {
-        return next(new ErrorHandler(error.message, 400));
-    }
-};
 
 const registerUser = TryCatch(async (req, res, next) => {
     const { name, about, currentPosition } = req.body;
@@ -43,8 +34,13 @@ const registerUser = TryCatch(async (req, res, next) => {
         };
     }
 
-    const user = await createUser(userData, next);
-    if (!user) return next(new ErrorHandler('User registration failed', 400));
+    const user = await User.create(userData);
+    if (!user) {
+        if (userData.img && userData.img.public_id) {
+            await DeleteFileCloudinary(userData.img.public_id);
+        }
+        return next(new ErrorHandler('User creation failed', 400));
+    }
 
     return res.status(201).json({
         success: true,
@@ -105,7 +101,9 @@ const deleteUser = TryCatch(async (req, res, next) => {
 
     if (user._id.toString() === req.user._id.toString()) return next(new ErrorHandler('You cannot delete yourself', 400));
 
-    await DeleteFileCloudinary(user.img.public_id);
+    if (user.img) {
+        await DeleteFileCloudinary(user.img.public_id);
+    }
 
     await User.findByIdAndDelete(id);
     return res.status(200).json({
@@ -190,13 +188,14 @@ const updateUser = TryCatch(async (req, res, next) => {
 
 const updateUserImage = TryCatch(async (req, res, next) => {
     const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) return next(new ErrorHandler('No user found', 404));
+
+    
     const file = req.file;
     const folder = "user";
     const result = await UploadFilesCloudinary(file, folder);
     if (!result) return next(new ErrorHandler('Image upload failed', 400));
-
-    const user = await User.findById(id);
-    if (!user) return next(new ErrorHandler('No user found', 404));
 
     await DeleteFileCloudinary(user.img.public_id);
 

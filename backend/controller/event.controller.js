@@ -3,16 +3,6 @@ import { Event } from "../models/event.model.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import { UploadFilesCloudinary } from "../utils/features.js";
 
-async function createEvent(data, next) {
-    try {
-        const event = await Event.create(data);
-        if (!event) return next(new ErrorHandler('Event creation failed', 400));
-
-        return event;
-    } catch (error) {
-        return next(new ErrorHandler(error.message, 400));
-    }
-}
 
 const registerEvent = TryCatch(async (req, res, next) => {
     const { title, date, location, description, category, spokesPerson } = req.body;
@@ -41,8 +31,13 @@ const registerEvent = TryCatch(async (req, res, next) => {
         };
     }
 
-    const event = await createEvent(eventData, next);
-    if (!event) return next(new ErrorHandler('Event creation failed', 400));
+    const event = await Event.create(eventData);
+    if (!event) {
+        if (eventData.img && eventData.img.public_id) {
+            await DeleteFileCloudinary(eventData.img.public_id);
+        }
+        return next(new ErrorHandler('Event creation failed', 400));
+    }
 
     return res.status(201).json({
         success: true,
