@@ -5,9 +5,14 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    img: {
-        type: String,
-        required: true
+    img:
+    {
+        public_id: {
+            type: String,
+        },
+        url: {
+            type: String,
+        }
     },
     date: {
         type: Date,
@@ -24,6 +29,7 @@ const eventSchema = new mongoose.Schema({
     spokesPerson: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        required: true
     },
     isFeatured: {
         type: Boolean,
@@ -35,17 +41,14 @@ const eventSchema = new mongoose.Schema({
     },
     collaboration: {
         type: String,
-        required: true
     },
     eventPoints: [
         {
             keyPoints: {
                 type: String,
-                required: true
             },
             explanation: {
                 type: String,
-                required: true
             }
         }
     ]
